@@ -4,6 +4,9 @@ import { registerAuthCommands } from './commands/auth/index.js';
 import { registerNamesCommands } from './commands/names/index.js';
 import { registerListingsCommands } from './commands/listings/index.js';
 import { registerOffersCommands } from './commands/offers/index.js';
+import { registerSalesCommands } from './commands/sales/index.js';
+import { registerSearchCommands } from './commands/search/index.js';
+import { registerActivityCommands } from './commands/activity/index.js';
 
 export function createProgram(): Command {
   const program = new Command()
@@ -18,6 +21,9 @@ export function createProgram(): Command {
   registerNamesCommands(program);
   registerListingsCommands(program);
   registerOffersCommands(program);
+  registerSalesCommands(program);
+  registerSearchCommands(program);
+  registerActivityCommands(program);
 
   return program;
 }

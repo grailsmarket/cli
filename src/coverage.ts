@@ -32,23 +32,23 @@ export const ENDPOINTS: EndpointEntry[] = [
   { method: 'GET', path: '/api/v1/offers/buyer/:address', command: 'offers by-buyer', group: 'offers', auth: 'none', phase: 1, implemented: true },
   { method: 'GET', path: '/api/v1/offers/owner/:address', command: 'offers by-owner', group: 'offers', auth: 'none', phase: 1, implemented: true },
   // sales
-  { method: 'GET', path: '/api/v1/sales', command: 'sales list', group: 'sales', auth: 'none', phase: 1, implemented: false },
-  { method: 'GET', path: '/api/v1/sales/name/:name', command: 'sales by-name', group: 'sales', auth: 'none', phase: 1, implemented: false },
-  { method: 'GET', path: '/api/v1/sales/address/:address', command: 'sales by-address', group: 'sales', auth: 'none', phase: 1, implemented: false },
-  { method: 'GET', path: '/api/v1/sales/:nameOrId/analytics', command: 'sales analytics', group: 'sales', auth: 'none', phase: 1, implemented: false },
+  { method: 'GET', path: '/api/v1/sales', command: 'sales list', group: 'sales', auth: 'none', phase: 1, implemented: true },
+  { method: 'GET', path: '/api/v1/sales/name/:name', command: 'sales by-name', group: 'sales', auth: 'none', phase: 1, implemented: true },
+  { method: 'GET', path: '/api/v1/sales/address/:address', command: 'sales by-address', group: 'sales', auth: 'none', phase: 1, implemented: true },
+  { method: 'GET', path: '/api/v1/sales/:nameOrId/analytics', command: 'sales analytics', group: 'sales', auth: 'none', phase: 1, implemented: true },
   // search
-  { method: 'GET', path: '/api/v1/search', command: 'search query', group: 'search', auth: 'optional', phase: 1, implemented: false },
-  { method: 'POST', path: '/api/v1/search/bulk', command: 'search bulk', group: 'search', auth: 'optional', phase: 1, implemented: false },
-  { method: 'POST', path: '/api/v1/search/bulk-filters', command: 'search bulk-filters', group: 'search', auth: 'optional', phase: 1, implemented: false },
+  { method: 'GET', path: '/api/v1/search', command: 'search query', group: 'search', auth: 'optional', phase: 1, implemented: true },
+  { method: 'POST', path: '/api/v1/search/bulk', command: 'search bulk', group: 'search', auth: 'optional', phase: 1, implemented: true },
+  { method: 'POST', path: '/api/v1/search/bulk-filters', command: 'search bulk-filters', group: 'search', auth: 'optional', phase: 1, implemented: true },
   // clubs
   { method: 'GET', path: '/api/v1/clubs', command: 'clubs list', group: 'clubs', auth: 'none', phase: 1, implemented: false },
   { method: 'GET', path: '/api/v1/clubs/:clubName', command: 'clubs get', group: 'clubs', auth: 'none', phase: 1, implemented: false },
   { method: 'GET', path: '/api/v1/clubs/holders', command: 'clubs all-holders', group: 'clubs', auth: 'none', phase: 1, implemented: false },
   { method: 'GET', path: '/api/v1/clubs/:clubName/holders', command: 'clubs holders', group: 'clubs', auth: 'none', phase: 1, implemented: false },
   // activity
-  { method: 'GET', path: '/api/v1/activity', command: 'activity feed', group: 'activity', auth: 'none', phase: 1, implemented: false },
-  { method: 'GET', path: '/api/v1/activity/:name', command: 'activity by-name', group: 'activity', auth: 'none', phase: 1, implemented: false },
-  { method: 'GET', path: '/api/v1/activity/address/:address', command: 'activity by-address', group: 'activity', auth: 'none', phase: 1, implemented: false },
+  { method: 'GET', path: '/api/v1/activity', command: 'activity feed', group: 'activity', auth: 'none', phase: 1, implemented: true },
+  { method: 'GET', path: '/api/v1/activity/:name', command: 'activity by-name', group: 'activity', auth: 'none', phase: 1, implemented: true },
+  { method: 'GET', path: '/api/v1/activity/address/:address', command: 'activity by-address', group: 'activity', auth: 'none', phase: 1, implemented: true },
   // trending
   { method: 'GET', path: '/api/v1/trending/views', command: 'trending views', group: 'trending', auth: 'optional', phase: 1, implemented: false },
   { method: 'GET', path: '/api/v1/trending/watchlist', command: 'trending watchlist', group: 'trending', auth: 'optional', phase: 1, implemented: false },
