@@ -6,7 +6,7 @@ import { handleError } from '../../errors.js';
 export function registerLoginCommand(parent: Command) {
   parent
     .command('login')
-    .description('Authenticate via SIWE (requires GRAILS_PRIVATE_KEY env var)')
+    .description('Authenticate via WalletConnect or GRAILS_PRIVATE_KEY (for CI)')
     .action(async (_opts, cmd) => {
       try {
         const result = await login();

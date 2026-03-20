@@ -1,3 +1,46 @@
+// Suppress WalletConnect's verbose logging before any WC imports
+const _stdoutWrite = process.stdout.write.bind(process.stdout);
+const _stderrWrite = process.stderr.write.bind(process.stderr);
+
+const wcPatterns = [
+  /\{ context: ['"]core/,
+  /Emitting Relayer/,
+  /Setting JSON-RPC/,
+  /Emitting history_/,
+  /wc_sessionEvent/,
+  /publishedAt:/,
+  /transportType:/,
+  /attestation:/,
+  /^Trace:/,
+  /at \S+walletconnect/,
+  /jsonrpc-provider/,
+  /jsonrpc-ws-connection/,
+  /requiredNamespaces.*deprecated/,
+];
+
+function shouldSuppressWC(str: unknown): boolean {
+  if (typeof str !== 'string') return false;
+  return wcPatterns.some((p) => p.test(str));
+}
+
+process.stdout.write = function (chunk: unknown, ...args: unknown[]): boolean {
+  if (shouldSuppressWC(String(chunk))) {
+    const cb = typeof args[args.length - 1] === 'function' ? (args[args.length - 1] as () => void) : undefined;
+    if (cb) cb();
+    return true;
+  }
+  return (_stdoutWrite as Function).call(process.stdout, chunk, ...args);
+} as typeof process.stdout.write;
+
+process.stderr.write = function (chunk: unknown, ...args: unknown[]): boolean {
+  if (shouldSuppressWC(String(chunk))) {
+    const cb = typeof args[args.length - 1] === 'function' ? (args[args.length - 1] as () => void) : undefined;
+    if (cb) cb();
+    return true;
+  }
+  return (_stderrWrite as Function).call(process.stderr, chunk, ...args);
+} as typeof process.stderr.write;
+
 import { Command } from 'commander';
 import { registerHealthCommands } from './commands/health/index.js';
 import { registerAuthCommands } from './commands/auth/index.js';

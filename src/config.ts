@@ -10,6 +10,7 @@ export interface CLIConfig {
   token?: string;
   address?: string;
   expiresAt?: string;
+  wcSessionTopic?: string;
 }
 
 const DEFAULT_CONFIG: CLIConfig = {
@@ -46,6 +47,7 @@ export function clearAuth(): void {
   delete config.token;
   delete config.address;
   delete config.expiresAt;
+  delete config.wcSessionTopic;
   ensureConfigDir();
   writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2) + '\n');
 }
