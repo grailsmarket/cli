@@ -10,6 +10,26 @@ import { registerActivityCommands } from './commands/activity/index.js';
 import { registerClubsCommands } from './commands/clubs/index.js';
 import { registerTrendingCommands } from './commands/trending/index.js';
 import { registerProfilesCommands } from './commands/profiles/index.js';
+import { registerAnalyticsCommands } from './commands/analytics/index.js';
+import { registerChartsCommands } from './commands/charts/index.js';
+import { registerLeaderboardCommands } from './commands/leaderboard/index.js';
+import { registerLegendsCommands } from './commands/legends/index.js';
+import { registerEnsRolesCommands } from './commands/ens-roles/index.js';
+import { registerGoogleMetricsCommands } from './commands/google-metrics/index.js';
+import { registerVotesCommands } from './commands/votes/index.js';
+import { registerBrokeredListingsCommands } from './commands/brokered-listings/index.js';
+import { registerPoapCommands } from './commands/poap/index.js';
+import { registerPersonasCommands } from './commands/personas/index.js';
+import { registerOrdersCommands } from './commands/orders/index.js';
+import { registerUsersCommands } from './commands/users/index.js';
+import { registerAiCommands } from './commands/ai/index.js';
+import { registerRecommendationsCommands } from './commands/recommendations/index.js';
+import { registerWatchlistCommands } from './commands/watchlist/index.js';
+import { registerCartCommands } from './commands/cart/index.js';
+import { registerNotificationsCommands } from './commands/notifications/index.js';
+import { registerUserInsightsCommands } from './commands/user-insights/index.js';
+import { registerVerificationCommands } from './commands/verification/index.js';
+import { registerSubgraphCommands } from './commands/subgraph/index.js';
 
 export function createProgram(): Command {
   const program = new Command()
@@ -30,6 +50,26 @@ export function createProgram(): Command {
   registerClubsCommands(program);
   registerTrendingCommands(program);
   registerProfilesCommands(program);
+  registerAnalyticsCommands(program);
+  registerChartsCommands(program);
+  registerLeaderboardCommands(program);
+  registerLegendsCommands(program);
+  registerEnsRolesCommands(program);
+  registerGoogleMetricsCommands(program);
+  registerVotesCommands(program);
+  registerBrokeredListingsCommands(program);
+  registerPoapCommands(program);
+  registerPersonasCommands(program);
+  registerOrdersCommands(program);
+  registerUsersCommands(program);
+  registerAiCommands(program);
+  registerRecommendationsCommands(program);
+  registerWatchlistCommands(program);
+  registerCartCommands(program);
+  registerNotificationsCommands(program);
+  registerUserInsightsCommands(program);
+  registerVerificationCommands(program);
+  registerSubgraphCommands(program);
 
   return program;
 }
