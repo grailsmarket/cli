@@ -77,6 +77,11 @@ export class HttpClient {
 
         const data = await response.json() as APIResponse<T>;
 
+        // Handle non-envelope responses (e.g., /health returns raw JSON without { success, data })
+        if (response.ok && data.success === undefined) {
+          return data as unknown as T;
+        }
+
         if (!response.ok || !data.success) {
           const error = data.error || { code: 'UNKNOWN_ERROR', message: `Request failed with status ${response.status}` };
 
