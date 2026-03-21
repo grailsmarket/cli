@@ -22,7 +22,7 @@ describe('ai semantic-search', () => {
   beforeEach(() => resetMocks());
 
   it('calls GET /ai/search/semantic with params', async () => {
-    await runCommand(registerSemanticSearchCommand, ['semantic-search', '-q', 'cool names', '--page', '1', '--sort-by', 'price']);
+    await runCommand(registerSemanticSearchCommand, ['semantic-search', 'cool names', '--page', '1', '--sort-by', 'price']);
     expect(mockHttp.get).toHaveBeenCalledWith('/ai/search/semantic', expect.objectContaining({
       q: 'cool names', page: '1', sortBy: 'price',
     }));
@@ -31,7 +31,7 @@ describe('ai semantic-search', () => {
 
   it('handles errors', async () => {
     mockHttp.get.mockRejectedValue(new Error('fail'));
-    await runCommand(registerSemanticSearchCommand, ['semantic-search', '-q', 'test']);
+    await runCommand(registerSemanticSearchCommand, ['semantic-search', 'test']);
     expect(mockHandleError).toHaveBeenCalledWith(expect.any(Error));
   });
 });
@@ -40,7 +40,7 @@ describe('ai related', () => {
   beforeEach(() => resetMocks());
 
   it('calls GET /ai/search/related with params', async () => {
-    await runCommand(registerRelatedCommand, ['related', '-q', 'vitalik', '--limit', '5']);
+    await runCommand(registerRelatedCommand, ['related', 'vitalik', '--limit', '5']);
     expect(mockHttp.get).toHaveBeenCalledWith('/ai/search/related', expect.objectContaining({
       q: 'vitalik', limit: '5',
     }));

@@ -5,18 +5,17 @@ import { handleError } from '../../errors.js';
 
 export function registerRelatedCommand(parent: Command) {
   parent
-    .command('related')
+    .command('related <text>')
     .description('Find related ENS names via AI')
-    .requiredOption('-q, --query <text>', 'Search query')
     .option('--page <n>', 'Page number')
     .option('--limit <n>', 'Results per page')
     .option('--sort-by <field>', 'Sort field')
     .option('--sort-order <dir>', 'Sort order (asc, desc)')
-    .action(async (opts, cmd) => {
+    .action(async (text: string, opts, cmd) => {
       try {
         const http = createHttpClient();
         const data = await http.get('/ai/search/related', {
-          q: opts.query,
+          q: text,
           page: opts.page,
           limit: opts.limit,
           sortBy: opts.sortBy,

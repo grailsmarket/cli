@@ -5,9 +5,8 @@ import { handleError } from '../../errors.js';
 
 export function registerQueryCommand(parent: Command) {
   parent
-    .command('query')
+    .command('query <text>')
     .description('Search ENS names with filtering')
-    .requiredOption('-q, --query <text>', 'Search query')
     .option('--page <n>', 'Page number')
     .option('--limit <n>', 'Results per page')
     .option('--sort-by <field>', 'Sort field (price, expiry_date, registration_date, character_count, alphabetical, offer, listing_date)')
@@ -21,11 +20,11 @@ export function registerQueryCommand(parent: Command) {
     .option('--marketplace <source>', 'Filter by marketplace (grails, opensea, all)')
     .option('--clubs <clubs>', 'Filter by clubs (comma-separated)')
     .option('--status <status>', 'Filter by status (registered, grace, premium, available, all)')
-    .action(async (opts, cmd) => {
+    .action(async (text: string, opts, cmd) => {
       try {
         const http = createHttpClient();
         const data = await http.get('/search', {
-          q: opts.query,
+          q: text,
           page: opts.page,
           limit: opts.limit,
           sortBy: opts.sortBy,

@@ -139,7 +139,7 @@ describe('watchlist create-list', () => {
   beforeEach(() => resetMocks());
 
   it('calls ensureAuth then POST /watchlist/lists', async () => {
-    await runCommand(registerCreateListCommand, ['create-list', '--name', 'My List']);
+    await runCommand(registerCreateListCommand, ['create-list', 'My List']);
     expect(mockEnsureAuth).toHaveBeenCalled();
     expect(mockHttp.post).toHaveBeenCalledWith('/watchlist/lists', { name: 'My List' });
     expect(mockPrintOutput).toHaveBeenCalled();

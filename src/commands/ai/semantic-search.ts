@@ -5,18 +5,17 @@ import { handleError } from '../../errors.js';
 
 export function registerSemanticSearchCommand(parent: Command) {
   parent
-    .command('semantic-search')
+    .command('semantic-search <text>')
     .description('AI-powered semantic search for ENS names')
-    .requiredOption('-q, --query <text>', 'Search query (min 2 chars)')
     .option('--page <n>', 'Page number')
     .option('--limit <n>', 'Results per page')
     .option('--sort-by <field>', 'Sort field')
     .option('--sort-order <dir>', 'Sort order (asc, desc)')
-    .action(async (opts, cmd) => {
+    .action(async (text: string, opts, cmd) => {
       try {
         const http = createHttpClient();
         const data = await http.get('/ai/search/semantic', {
-          q: opts.query,
+          q: text,
           page: opts.page,
           limit: opts.limit,
           sortBy: opts.sortBy,

@@ -53,7 +53,7 @@ describe('votes vote', () => {
   beforeEach(() => resetMocks());
 
   it('calls ensureAuth then POST /votes with body', async () => {
-    await runCommand(registerVoteCommand, ['vote', '--ens-name', 'test.eth', '--vote', '1']);
+    await runCommand(registerVoteCommand, ['vote', 'test.eth', '--vote', '1']);
     expect(mockEnsureAuth).toHaveBeenCalled();
     expect(mockHttp.post).toHaveBeenCalledWith('/votes', {
       ensName: 'test.eth',
@@ -63,7 +63,7 @@ describe('votes vote', () => {
   });
 
   it('handles downvote', async () => {
-    await runCommand(registerVoteCommand, ['vote', '--ens-name', 'test.eth', '--vote', '-1']);
+    await runCommand(registerVoteCommand, ['vote', 'test.eth', '--vote', '-1']);
     expect(mockHttp.post).toHaveBeenCalledWith('/votes', {
       ensName: 'test.eth',
       vote: -1,
@@ -72,7 +72,7 @@ describe('votes vote', () => {
 
   it('handles errors', async () => {
     mockEnsureAuth.mockRejectedValue(new Error('not authed'));
-    await runCommand(registerVoteCommand, ['vote', '--ens-name', 'test.eth', '--vote', '1']);
+    await runCommand(registerVoteCommand, ['vote', 'test.eth', '--vote', '1']);
     expect(mockHandleError).toHaveBeenCalledWith(expect.any(Error));
   });
 });

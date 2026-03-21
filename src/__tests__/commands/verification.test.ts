@@ -24,14 +24,14 @@ describe('verification email', () => {
   beforeEach(() => resetMocks());
 
   it('calls POST /verification/email with token', async () => {
-    await runCommand(registerEmailCommand, ['email', '--token', 'abc123']);
+    await runCommand(registerEmailCommand, ['email', 'abc123']);
     expect(mockHttp.post).toHaveBeenCalledWith('/verification/email', { token: 'abc123' });
     expect(mockPrintOutput).toHaveBeenCalled();
   });
 
   it('handles errors', async () => {
     mockHttp.post.mockRejectedValue(new Error('fail'));
-    await runCommand(registerEmailCommand, ['email', '--token', 'abc']);
+    await runCommand(registerEmailCommand, ['email', 'abc']);
     expect(mockHandleError).toHaveBeenCalledWith(expect.any(Error));
   });
 });

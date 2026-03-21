@@ -26,7 +26,7 @@ describe('recommendations also-viewed', () => {
   beforeEach(() => resetMocks());
 
   it('calls GET /recommendations/also-viewed with params', async () => {
-    await runCommand(registerAlsoViewedCommand, ['also-viewed', '--name', 'test.eth', '--limit', '10']);
+    await runCommand(registerAlsoViewedCommand, ['also-viewed', 'test.eth', '--limit', '10']);
     expect(mockHttp.get).toHaveBeenCalledWith('/recommendations/also-viewed', {
       name: 'test.eth', limit: '10',
     });
@@ -35,7 +35,7 @@ describe('recommendations also-viewed', () => {
 
   it('handles errors', async () => {
     mockHttp.get.mockRejectedValue(new Error('fail'));
-    await runCommand(registerAlsoViewedCommand, ['also-viewed', '--name', 'test.eth']);
+    await runCommand(registerAlsoViewedCommand, ['also-viewed', 'test.eth']);
     expect(mockHandleError).toHaveBeenCalledWith(expect.any(Error));
   });
 });

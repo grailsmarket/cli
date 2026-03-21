@@ -5,15 +5,14 @@ import { handleError } from '../../errors.js';
 
 export function registerBulkCommand(parent: Command) {
   parent
-    .command('bulk')
+    .command('bulk <names>')
     .description('Bulk exact search for ENS names (up to 10,000 terms)')
-    .requiredOption('--terms <names>', 'Comma-separated list of names to search')
     .option('--page <n>', 'Page number')
     .option('--limit <n>', 'Results per page')
-    .action(async (opts, cmd) => {
+    .action(async (names: string, opts, cmd) => {
       try {
         const http = createHttpClient();
-        const terms = opts.terms.split(',').map((t: string) => t.trim());
+        const terms = names.split(',').map((t: string) => t.trim());
         const data = await http.post('/search/bulk', {
           terms,
           page: opts.page ? parseInt(opts.page) : undefined,

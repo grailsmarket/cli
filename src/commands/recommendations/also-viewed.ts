@@ -5,15 +5,14 @@ import { handleError } from '../../errors.js';
 
 export function registerAlsoViewedCommand(parent: Command) {
   parent
-    .command('also-viewed')
+    .command('also-viewed <name>')
     .description('Get names that collectors who viewed a name also viewed')
-    .requiredOption('--name <name>', 'ENS name to get recommendations for')
     .option('--limit <n>', 'Results limit')
-    .action(async (opts, cmd) => {
+    .action(async (name: string, opts, cmd) => {
       try {
         const http = createHttpClient();
         const data = await http.get('/recommendations/also-viewed', {
-          name: opts.name,
+          name,
           limit: opts.limit,
         });
         printOutput(data, cmd.optsWithGlobals());

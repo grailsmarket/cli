@@ -5,13 +5,12 @@ import { handleError } from '../../errors.js';
 
 export function registerEmailCommand(parent: Command) {
   parent
-    .command('email')
+    .command('email <token>')
     .description('Verify email with token')
-    .requiredOption('--token <token>', 'Verification token')
-    .action(async (opts, cmd) => {
+    .action(async (token: string, opts, cmd) => {
       try {
         const http = createHttpClient();
-        const data = await http.post('/verification/email', { token: opts.token });
+        const data = await http.post('/verification/email', { token });
         printOutput(data, cmd.optsWithGlobals());
       } catch (error) {
         handleError(error);
