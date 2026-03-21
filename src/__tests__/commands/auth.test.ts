@@ -30,12 +30,11 @@ describe('auth login', () => {
   beforeEach(() => resetMocks());
 
   it('calls login() and prints result', async () => {
+    const stderrSpy = vi.spyOn(process.stderr, 'write').mockReturnValue(true);
     await runCommand(registerLoginCommand, ['login']);
     expect(mockLogin).toHaveBeenCalled();
-    expect(mockPrintOutput).toHaveBeenCalledWith(
-      { address: '0xmock', message: 'Authenticated successfully' },
-      expect.any(Object),
-    );
+    expect(stderrSpy).toHaveBeenCalledWith('Connected with 0xmock\nAuthenticated successfully\n');
+    stderrSpy.mockRestore();
   });
 
   it('handles errors', async () => {

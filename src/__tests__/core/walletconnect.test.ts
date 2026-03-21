@@ -1,11 +1,24 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 
 const mockInit = vi.fn();
 const mockConnect = vi.fn();
 const mockRequest = vi.fn();
 const mockDisconnect = vi.fn();
-const mockOn = vi.fn();
 const mockSessionGetAll = vi.fn();
+
+// Store event handlers persistently so they survive vi.clearAllMocks()
+const eventHandlers: Record<string, Function> = {};
+const mockOn = vi.fn((event: string, handler: Function) => {
+  eventHandlers[event] = handler;
+});
+
+const mockLoadConfig = vi.fn((): { apiUrl: string; wcSessionTopic?: string } => ({ apiUrl: 'https://api.test.com' }));
+const mockSaveConfig = vi.fn();
+
+vi.mock('../../config.js', () => ({
+  loadConfig: () => mockLoadConfig(),
+  saveConfig: (c: unknown) => mockSaveConfig(c),
+}));
 
 vi.mock('@walletconnect/sign-client', () => ({
   SignClient: {
@@ -45,6 +58,7 @@ describe('WalletConnectService', () => {
       );
       expect(mockOn).toHaveBeenCalledWith('session_delete', expect.any(Function));
       expect(mockOn).toHaveBeenCalledWith('session_expire', expect.any(Function));
+      expect(mockOn).toHaveBeenCalledWith('session_update', expect.any(Function));
     });
 
     it('is idempotent — second call is a no-op', async () => {
@@ -55,12 +69,47 @@ describe('WalletConnectService', () => {
     });
   });
 
+  describe('session event handlers', () => {
+    it('clears wcSessionTopic from config when session is deleted with matching topic', () => {
+      mockLoadConfig.mockReturnValue({
+        apiUrl: 'https://api.test.com',
+        wcSessionTopic: 'deleted-topic',
+      });
+
+      eventHandlers['session_delete']({ topic: 'deleted-topic' });
+
+      expect(mockSaveConfig).toHaveBeenCalledWith({ wcSessionTopic: undefined });
+    });
+
+    it('does not clear config when deleted topic does not match', () => {
+      mockLoadConfig.mockReturnValue({
+        apiUrl: 'https://api.test.com',
+        wcSessionTopic: 'other-topic',
+      });
+
+      eventHandlers['session_delete']({ topic: 'different-topic' });
+
+      expect(mockSaveConfig).not.toHaveBeenCalled();
+    });
+
+    it('clears wcSessionTopic from config when session expires with matching topic', () => {
+      mockLoadConfig.mockReturnValue({
+        apiUrl: 'https://api.test.com',
+        wcSessionTopic: 'expired-topic',
+      });
+
+      eventHandlers['session_expire']({ topic: 'expired-topic' });
+
+      expect(mockSaveConfig).toHaveBeenCalledWith({ wcSessionTopic: undefined });
+    });
+  });
+
   describe('connect', () => {
     it('returns uri and waitForApproval', async () => {
       const mockApproval = vi.fn().mockResolvedValue({
         topic: 'session-topic',
         namespaces: {
-          eip155: { accounts: ['eip155:1:0xABC123'] },
+          eip155: { accounts: ['eip155:1:0xd8668ad8a4a9099578bfb734e83f4ac6570ffcb0'] },
         },
       });
 
@@ -74,7 +123,7 @@ describe('WalletConnectService', () => {
 
       expect(result.uri).toBe('wc:abc123@2?relay-protocol=irn&symKey=xyz');
       const session = await result.waitForApproval();
-      expect(session).toEqual({ topic: 'session-topic', address: '0xABC123' });
+      expect(session).toEqual({ topic: 'session-topic', address: '0xd8668AD8A4A9099578bFb734E83f4Ac6570FFCb0' });
     });
 
     it('throws when no URI is generated', async () => {
@@ -101,13 +150,13 @@ describe('WalletConnectService', () => {
       mockSessionGetAll.mockReturnValue([
         {
           topic: 'existing-topic',
-          namespaces: { eip155: { accounts: ['eip155:1:0xRestoredAddr'] } },
+          namespaces: { eip155: { accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] } },
         },
       ]);
 
       await walletConnect.initialize();
       const result = walletConnect.restoreSession('existing-topic');
-      expect(result).toEqual({ topic: 'existing-topic', address: '0xRestoredAddr' });
+      expect(result).toEqual({ topic: 'existing-topic', address: '0x1234567890AbcdEF1234567890aBcdef12345678' });
     });
 
     it('returns null when topic not found', async () => {

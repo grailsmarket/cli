@@ -61,9 +61,12 @@ export function handleError(error: unknown): never {
     process.exit(EXIT_CODES.ERROR);
   }
 
+  const message = (typeof error === 'object' && error !== null)
+    ? ('message' in error ? String((error as Record<string, unknown>).message) : JSON.stringify(error))
+    : String(error);
   console.log(JSON.stringify({
     ok: false,
-    error: { code: 'UNKNOWN_ERROR', message: String(error) },
+    error: { code: 'UNKNOWN_ERROR', message },
   }));
   process.exit(EXIT_CODES.ERROR);
 }

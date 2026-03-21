@@ -73,7 +73,9 @@ async function loginWithWalletConnect(): Promise<{ token: string; address: strin
       topic = restored.topic;
       address = restored.address;
     } else {
-      // Stale topic — fall through to new connection
+      // Stale topic — disconnect old session and clear config before reconnecting
+      await walletConnect.disconnect(config.wcSessionTopic);
+      saveConfig({ wcSessionTopic: undefined });
       ({ topic, address } = await connectWithQR(walletConnect));
     }
   } else {
@@ -120,7 +122,8 @@ async function connectWithQR(wc: Awaited<typeof import('./walletconnect.js')>['w
 
   // Display QR code on stderr (keep stdout clean for JSON)
   if (process.stderr.isTTY) {
-    const qrcode = await import('qrcode-terminal');
+    const qrcodeMod = await import('qrcode-terminal');
+    const qrcode = qrcodeMod.default ?? qrcodeMod;
     qrcode.generate(uri, { small: true }, (code: string) => {
       process.stderr.write('\nScan this QR code with your wallet:\n\n');
       process.stderr.write(code + '\n\n');

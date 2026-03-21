@@ -93,13 +93,13 @@ describe('watchlist add', () => {
   beforeEach(() => resetMocks());
 
   it('accepts --data JSON', async () => {
-    await runCommand(registerAddCommand, ['add', '--ens-name', 'ignored', '--data', '{"ensName":"foo.eth"}']);
+    await runCommand(registerAddCommand, ['add', 'ignored', '--data', '{"ensName":"foo.eth"}']);
     expect(mockEnsureAuth).toHaveBeenCalled();
     expect(mockHttp.post).toHaveBeenCalledWith('/watchlist', { ensName: 'foo.eth' });
   });
 
   it('builds body from individual flags', async () => {
-    await runCommand(registerAddCommand, ['add', '--ens-name', 'test.eth', '--list-id', '3']);
+    await runCommand(registerAddCommand, ['add', 'test.eth', '--list-id', '3']);
     expect(mockHttp.post).toHaveBeenCalledWith('/watchlist', expect.objectContaining({
       ensName: 'test.eth',
       listId: 3,
@@ -108,7 +108,7 @@ describe('watchlist add', () => {
 
   it('handles errors', async () => {
     mockHttp.post.mockRejectedValue(new Error('fail'));
-    await runCommand(registerAddCommand, ['add', '--ens-name', 'test.eth']);
+    await runCommand(registerAddCommand, ['add', 'test.eth']);
     expect(mockHandleError).toHaveBeenCalledWith(expect.any(Error));
   });
 });

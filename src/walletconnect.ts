@@ -1,4 +1,14 @@
 import { SignClient } from '@walletconnect/sign-client';
+import { getAddress } from 'viem';
+import { loadConfig, saveConfig } from './config.js';
+
+function toError(err: unknown): Error {
+  if (err instanceof Error) return err;
+  if (typeof err === 'object' && err !== null && 'message' in err) {
+    return new Error(String((err as Record<string, unknown>).message));
+  }
+  return new Error(typeof err === 'string' ? err : JSON.stringify(err));
+}
 
 const PROJECT_ID = process.env.WALLETCONNECT_PROJECT_ID || 'demo-project-id';
 
@@ -22,13 +32,22 @@ class WalletConnectService {
       logger: 'error',
     });
 
-    this.signClient.on('session_delete', () => {
-      // Session deleted by wallet — nothing to do locally,
-      // config still has the topic but restoreSession will fail gracefully
+    this.signClient.on('session_delete', ({ topic }: { topic: string }) => {
+      const config = loadConfig();
+      if (config.wcSessionTopic === topic) {
+        saveConfig({ wcSessionTopic: undefined });
+      }
     });
 
-    this.signClient.on('session_expire', () => {
-      // Same as above
+    this.signClient.on('session_expire', ({ topic }: { topic: string }) => {
+      const config = loadConfig();
+      if (config.wcSessionTopic === topic) {
+        saveConfig({ wcSessionTopic: undefined });
+      }
+    });
+
+    this.signClient.on('session_update', () => {
+      // Updated session data is persisted by the SDK — no action needed
     });
 
     this.initialized = true;
@@ -67,12 +86,12 @@ class WalletConnectService {
                 reject(new Error('No accounts returned from wallet'));
                 return;
               }
-              const [, , address] = accounts[0].split(':');
-              resolve({ topic: session.topic, address });
+              const [, , rawAddress] = accounts[0].split(':');
+              resolve({ topic: session.topic, address: getAddress(rawAddress) });
             })
             .catch((err) => {
               clearTimeout(timer);
-              reject(err);
+              reject(toError(err));
             });
         }),
     };
@@ -88,27 +107,31 @@ class WalletConnectService {
     const accounts = session.namespaces.eip155?.accounts || [];
     if (accounts.length === 0) return null;
 
-    const [, , address] = accounts[0].split(':');
-    return { topic: session.topic, address };
+    const [, , rawAddress] = accounts[0].split(':');
+    return { topic: session.topic, address: getAddress(rawAddress) };
   }
 
   async signMessage(topic: string, address: string, message: string): Promise<string> {
     if (!this.signClient) throw new Error('WalletConnect not initialized');
 
-    const result = await this.signClient.request({
-      topic,
-      chainId: 'eip155:1',
-      request: {
-        method: 'personal_sign',
-        params: [
-          // personal_sign expects hex-encoded message first, then address
-          `0x${Buffer.from(message, 'utf-8').toString('hex')}`,
-          address,
-        ],
-      },
-    });
+    try {
+      const result = await this.signClient.request({
+        topic,
+        chainId: 'eip155:1',
+        request: {
+          method: 'personal_sign',
+          params: [
+            // personal_sign expects hex-encoded message first, then address
+            `0x${Buffer.from(message, 'utf-8').toString('hex')}`,
+            address,
+          ],
+        },
+      });
 
-    return result as string;
+      return result as string;
+    } catch (err) {
+      throw toError(err);
+    }
   }
 
   async disconnect(topic: string): Promise<void> {

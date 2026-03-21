@@ -1,22 +1,38 @@
+import 'dotenv/config';
+
 // Suppress WalletConnect's verbose logging before any WC imports
 const _stdoutWrite = process.stdout.write.bind(process.stdout);
 const _stderrWrite = process.stderr.write.bind(process.stderr);
 
 const wcPatterns = [
-  /\{ context: ['"]core/,
+  /context:\s*'core'/,
+  /Fatal socket error/,
+  /closing transport/,
   /Emitting Relayer/,
   /Setting JSON-RPC/,
   /Emitting history_/,
-  /wc_sessionEvent/,
+  /wc_session/,
   /publishedAt:/,
   /transportType:/,
   /attestation:/,
-  /^Trace:/,
+  /Trace:/,
   /at \S+walletconnect/,
   /jsonrpc-provider/,
   /jsonrpc-ws-connection/,
   /requiredNamespaces.*deprecated/,
+  /No matching key/,
+  /level:\s*[56]0/,
+  /@walletconnect\/sign-client/,
+  /"use strict";Object\.defineProperty/,
 ];
+
+// Suppress unhandled WC internal rejections (e.g. session_update race conditions)
+process.on('unhandledRejection', (reason: unknown) => {
+  const str = reason instanceof Error ? reason.stack || reason.message : String(reason);
+  if (/No matching key.*session|session.topic.doesn.t.exist/i.test(str)) return;
+  // Re-throw non-WC rejections
+  throw reason;
+});
 
 function shouldSuppressWC(str: unknown): boolean {
   if (typeof str !== 'string') return false;

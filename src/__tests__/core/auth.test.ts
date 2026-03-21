@@ -162,6 +162,8 @@ describe('login', () => {
     const result = await login();
 
     expect(mockWCRestoreSession).toHaveBeenCalledWith('stale-topic');
+    expect(mockWCDisconnect).toHaveBeenCalledWith('stale-topic');
+    expect(mockSaveConfig).toHaveBeenCalledWith({ wcSessionTopic: undefined });
     expect(mockWCConnect).toHaveBeenCalled();
     expect(result).toEqual({ token: 'new-token', address: '0xNewAddr' });
 
