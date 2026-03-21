@@ -48,31 +48,31 @@ npm run coverage
 
 ## Authentication
 
-Some commands require authentication. The CLI uses [Sign-In with Ethereum (SIWE)](https://eips.ethereum.org/EIPS/eip-4361) — you sign a message with your Ethereum private key to get a JWT token.
+Some commands require authentication. The CLI supports two auth methods:
 
-### 1. Set your private key
-
-```bash
-export GRAILS_PRIVATE_KEY=0xYourPrivateKeyHere
-```
-
-The private key is **never stored on disk** — only the resulting JWT token is saved to `~/.config/grails-cli/config.json`.
-
-### 2. Log in
+### Option A: WalletConnect (interactive)
 
 ```bash
 grails auth login
 ```
 
-```json
-{
-  "ok": true,
-  "data": {
-    "address": "0x1234...abcd",
-    "message": "Authenticated successfully"
-  }
-}
+Scan the QR code with your wallet (or paste the URI). After approving, you'll see:
+
 ```
+Connected with 0x1234...abcd
+Authenticated successfully
+```
+
+The session is saved so future logins can restore it without re-scanning.
+
+### Option B: Private key (CI / scripts)
+
+```bash
+export GRAILS_PRIVATE_KEY=0xYourPrivateKeyHere
+grails auth login
+```
+
+The private key is **never stored on disk** — only the resulting JWT token is saved to `~/.config/grails-cli/config.json`.
 
 ### 3. Check status
 
@@ -176,13 +176,13 @@ grails names history vitalik.eth --page 1 --limit 50
 
 ```bash
 # Search with filters
-grails search query -q "cat" --min-length 3 --max-length 5 --listed true --sort-by price
+grails search query "cat" --min-length 3 --max-length 5 --listed true --sort-by price
 
 # Bulk exact search (up to 10,000)
-grails search bulk --terms "vitalik.eth,nick.eth,brantly.eth"
+grails search bulk "vitalik.eth,nick.eth,brantly.eth"
 
 # Bulk search with filters
-grails search bulk-filters --terms "cat,dog,fish" --sort-by price --sort-order asc
+grails search bulk-filters "cat,dog,fish" --sort-by price --sort-order asc
 ```
 
 ### Listings
@@ -320,12 +320,12 @@ grails watchlist lists
 grails watchlist search -q "cat" --sort-by price
 
 # Add/remove names
-grails watchlist add --ens-name vitalik.eth
+grails watchlist add vitalik.eth
 grails watchlist remove 42
 grails watchlist check vitalik.eth
 
 # Manage collections
-grails watchlist create-list --name "My Favorites"
+grails watchlist create-list "My Favorites"
 grails watchlist update-list 1 --name "Top Picks"
 grails watchlist delete-list 1
 
@@ -354,7 +354,7 @@ grails votes get vitalik.eth
 grails votes leaderboard --sort-by netScore --limit 50
 
 # Cast a vote (-1, 0, or 1)
-grails votes vote --ens-name vitalik.eth --vote 1
+grails votes vote vitalik.eth --vote 1
 ```
 
 ### Notifications (requires auth)
@@ -381,7 +381,7 @@ grails user-insights sales
 
 ```bash
 # Also-viewed (public)
-grails recommendations also-viewed --name vitalik.eth --limit 10
+grails recommendations also-viewed vitalik.eth --limit 10
 
 # Personalized (requires auth)
 grails recommendations similar --limit 10
@@ -393,10 +393,10 @@ grails recommendations for-you --limit 10
 
 ```bash
 # Semantic search (AI-expanded)
-grails ai semantic-search -q "animals" --limit 20
+grails ai semantic-search "animals" --limit 20
 
 # Related names
-grails ai related -q "cat" --limit 20
+grails ai related "cat" --limit 20
 
 # AI recommendations for a name
 grails ai recommendations vitalik.eth
@@ -445,7 +445,7 @@ grails poap status
 grails poap claim
 
 # Verification
-grails verification email --token abc123
+grails verification email abc123
 grails verification resend
 
 # User profile
@@ -475,7 +475,7 @@ Example agent workflow:
 
 ```bash
 # Search for 3-letter names under 1 ETH
-results=$(grails search query -q "*" --max-length 3 --listed true --max-price 1000000000000000000)
+results=$(grails search query "*" --max-length 3 --listed true --max-price 1000000000000000000)
 
 # Check if any results
 if echo "$results" | jq -e '.ok' > /dev/null 2>&1; then
@@ -483,8 +483,8 @@ if echo "$results" | jq -e '.ok' > /dev/null 2>&1; then
 fi
 
 # Add interesting names to watchlist
-grails watchlist add --ens-name cat.eth
-grails watchlist add --ens-name dog.eth
+grails watchlist add cat.eth
+grails watchlist add dog.eth
 ```
 
 ## Project Structure
