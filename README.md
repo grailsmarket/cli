@@ -6,7 +6,7 @@ Command-line interface for the [Grails ENS Marketplace](https://grails.app) API.
 
 ### Prerequisites
 
-- Node.js >= 18
+- Node.js >= 20
 - npm
 
 ### Install
