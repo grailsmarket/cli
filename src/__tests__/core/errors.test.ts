@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, type MockInstance } from 'vitest';
 import { CLIError, EXIT_CODES, exitCodeFromStatus, handleError } from '../../errors.js';
 
 describe('CLIError', () => {
@@ -54,8 +54,8 @@ describe('exitCodeFromStatus', () => {
 });
 
 describe('handleError', () => {
-  let exitSpy: ReturnType<typeof vi.spyOn>;
-  let logSpy: ReturnType<typeof vi.spyOn>;
+  let exitSpy: MockInstance<[code?: string | number | null | undefined], never>;
+  let logSpy: MockInstance<[message?: unknown, ...optionalParams: unknown[]], void>;
 
   beforeEach(() => {
     exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);

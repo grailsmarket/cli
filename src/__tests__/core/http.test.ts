@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, type MockInstance } from 'vitest';
 
 vi.mock('../../config.js', () => ({
   getApiUrl: vi.fn(() => 'https://api.test.com'),
@@ -22,7 +22,7 @@ function mockFetchResponse(body: unknown, status = 200, headers: Record<string, 
 }
 
 describe('HttpClient', () => {
-  let fetchSpy: ReturnType<typeof vi.spyOn>;
+  let fetchSpy: MockInstance<[input: string | URL | Request, init?: RequestInit | undefined], Promise<Response>>;
 
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
