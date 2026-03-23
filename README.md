@@ -2,6 +2,8 @@
 
 Command-line interface for the [Grails ENS Marketplace](https://grails.app) API. Covers the full API surface (124 endpoints) and outputs structured JSON by default, making it ideal for agent and script consumption.
 
+[!WARNING] This is experimental software and should be used with caution.  This tool accesses Grails API endpoints that allow the operator to create and delete offers, listings and update user data.  Users are encouraged to test with a test wallet with no funds before using any permissioned endpoints
+
 ## Setup
 
 ### Prerequisites
