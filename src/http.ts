@@ -75,6 +75,11 @@ export class HttpClient {
 
         clearTimeout(timeoutId);
 
+        // 204 No Content — no body to parse
+        if (response.status === 204) {
+          return undefined as T;
+        }
+
         const data = await response.json() as APIResponse<T>;
 
         // Handle non-envelope responses (e.g., /health returns raw JSON without { success, data })

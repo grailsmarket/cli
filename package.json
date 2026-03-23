@@ -6,12 +6,17 @@
   "bin": {
     "grails": "./dist/index.js"
   },
+  "files": ["dist"],
   "scripts": {
     "dev": "tsx src/index.ts",
     "build": "tsup",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "coverage": "tsx scripts/check-coverage.ts"
+    "coverage": "tsx scripts/check-coverage.ts",
+    "prepublishOnly": "npm run typecheck && npm run build"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "license": "MIT",
   "engines": {
